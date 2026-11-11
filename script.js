@@ -432,9 +432,23 @@
     form.addEventListener('input', (e) => { const f = e.target.closest('.field'); if (f) f.classList.remove('is-bad'); });
   }
 
+  /* ───────── Galería: el video solo se descarga y reproduce cuando está a la vista ───────── */
+  function setupGalVideo() {
+    const vids = $$('video[data-gal-video]');
+    // Sin JS, con movimiento reducido o sin IntersectionObserver: se queda con sus controles (no se reproduce solo)
+    if (reduce || !vids.length || !('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver((es) => es.forEach((e) => {
+      const v = e.target;
+      if (!e.isIntersecting) { v.pause(); return; }
+      const p = v.play();
+      if (p && p.catch) p.catch(() => v.setAttribute('controls', '')); // si el navegador bloquea la reproducción automática
+    }), { rootMargin: '120px' });
+    vids.forEach((v) => { v.muted = true; v.removeAttribute('controls'); io.observe(v); });
+  }
+
   /* ───────── Arranque ───────── */
   function boot() {
-    [setupIndexes, setupWA, setupWords, setupMenu, setupSpy, setupScroll, setupTilt, setupLive, setupFinder, setupForm, setupLoader]
+    [setupIndexes, setupWA, setupWords, setupMenu, setupSpy, setupScroll, setupTilt, setupLive, setupGalVideo, setupFinder, setupForm, setupLoader]
       .forEach((fn) => { try { fn(); } catch (err) { console.error(fn.name, err); } });
   }
   try {

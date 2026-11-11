@@ -7,3 +7,6 @@ Thumbs.db
 .DS_Store
 *.log
 .cache/
+
+# Material crudo del cliente (no se publica; las versiones optimizadas viven en assets/img/galeria)
+nuevas/
